@@ -5,6 +5,18 @@ helper.function <- function()
    return(1)
 }
 
+first_line <- function(df, split_by){
+  # Given a data frame and a single factor on which to split it
+  # return the first line.
+  # Useful for extracting constant but repeated data
+  # in conjunction with ddply
+  
+  require(plyr)
+  
+  if (class(df) != "data.frame") stop("df must be a data.frame")
+  ddply(df, split_by, function(piece) piece[1, ])
+}
+
 same_dims <- function(df){
   # check if all data frames have the same number of rows and columns
   # if not, abort with error msg; otherwise continue with concatenation
