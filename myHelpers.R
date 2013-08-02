@@ -44,12 +44,9 @@ same_cols <- function(df){
   TRUE
 }
 
-csv_to_df <- function(file_pattern, path=".", sep=",", header=TRUE, full.names=TRUE, ...){
+csv_to_df_list <- function(file_pattern, path=".", sep=",", header=TRUE, full.names=TRUE, ...){
   # Get a list of all files ending in a particular extension,
-  # read them all into a list of data frames, then concatenate them row-wise.
-  # Requires that all rows have identical column names. Extra arguments
-  # are passed through to the read.csv function applied to each file.
-  # Requires: same_dims() and same_cols() (~/Dropbox/R/myHelpers.R)
+  # read them all into a list of data frames.
   #
   # Arguments:
   # file_pattern: regular expression used to match file names
@@ -60,9 +57,36 @@ csv_to_df <- function(file_pattern, path=".", sep=",", header=TRUE, full.names=T
   
   listfiles <- list.files(pattern = file_pattern, full.names = full.names, path = path)
   df <- lapply(listfiles, function(file) read.csv(file, header = header, sep = sep, ...))
-  same_dims(df) # check dimensions of files
-  same_cols(df) # check if all data frames have the same column names
-  df <- do.call(rbind, df) # concatenate files
+  df
+}
+
+list_to_df <- function(df.list){
+  # Given a list of data frames, check whether all have identical column names.
+  # Requires that all rows have identical column names. Extra arguments
+  # are passed through to the read.csv function applied to each file.
+  # Requires: same_dims(), same_cols(), and csv_to_df_list (~/Dropbox/R/myHelpers.R)
+  #
+  # Arguments:
+  # file_pattern: regular expression used to match file names
+  # path: path to search for matching files. Default is current working directory.
+  # sep: separator for csv file. Default is a comma. Use sep="\t" for tab-separated values.
+  # header: include a header row. Change to FALSE if there isn't a header.
+  # full.names: generate full path + filename for list.files.
+  
+  same_dims(df.list) # check dimensions of files
+  same_cols(df.list) # check if all data frames have the same column names
+  df <- do.call(rbind, df.list) # concatenate files
+  df
+}
+
+csv_to_df <- function(file_pattern, ...){
+  # Turn a list of CSV files matching file_pattern into a master data frame
+  # with all CSV contents concatenated vertically, with checks that all data
+  # frames have the same dimensions and column names.
+  # Depends on list_to_df, csv_to_df_list, same_dims, and same_cols.
+  
+  list_of_dfs <- csv_to_df_list(file_pattern, sep = "\t", ...)
+  df <- list_to_df(list_of_dfs)
   df
 }
 
