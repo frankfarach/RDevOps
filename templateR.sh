@@ -46,8 +46,11 @@ fi
 
 # Clone templateR repo from user's GitHub account
 # setting the local copy's name to the first argument
-git clone https://github.com/$USER/templateR $PROJ
-echo "Successfully cloned $PROJ repository from ${USER}'s GitHub account."
+if git clone https://github.com/$USER/templateR $PROJ
+  then echo "Successfully cloned $PROJ repository from ${USER}'s GitHub account."
+  else echo "Unsuccessful clone. Maybe $USER isn't a valid GitHub account?"
+fi
+exit $?
 
 # Change the name of the RStudio project file
 mv $PROJ/NewProject.Rproj $PROJ/${PROJ}.Rproj
