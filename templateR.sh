@@ -33,8 +33,8 @@ PROJ=$1
 if [ -d "$PROJ" ]
   then
     echo "Directory named $PROJ already exists. Aborted."
-    exit 0
 fi
+exit 1
 
 # Use default project name if none is supplied
 if [ -z "$1" ]
