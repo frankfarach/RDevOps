@@ -20,6 +20,12 @@
 # If you've forked templateR, replace below with your own GitHub user account
 USER=frankfarach
 
+# Use 2nd argument as user name if supplied
+if [ -n "$2" ]
+  then
+    USER=$2
+fi
+
 # Name of project, if specified as first argument
 PROJ=$1
 
