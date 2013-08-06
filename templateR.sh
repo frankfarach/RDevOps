@@ -3,10 +3,11 @@
 ##############################################################################
 # Name: templateR.sh 
 # Author: Frank Farach
-# Description: Script to clone templateR repo from user's
-# GitHub account, with option to name the local working directory and RStudio
+# Description: Script to clone templateR repo from  GitHub account, 
+# with options to name the local working directory and RStudio
 # project. This depends on the existence of a repository called templateR
 # in the GitHub account of user named in the global variable USER below.
+# See: http://github.com/frankfarach/templateR
 #
 # Usage: 
 # ./templateR.sh <project name (optional)> <GitHub user name (optional)>
