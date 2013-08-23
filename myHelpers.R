@@ -22,9 +22,8 @@ same_dims <- function(df){
   # if not, abort with error msg; otherwise continue with concatenation
   # df must be a list of data frames
   dims <- lapply(df, dim)
-  if (length(df) < 2) stop("Must pass in a list of 2 or more data frames")
-  else if (length(Reduce(intersect, dims)) != 2) stop("Files don't all have the same number of rows and columns")
-  else TRUE
+  if (length(Reduce(intersect, dims)) != 2) stop("Files don't all have the same number of rows and columns")
+  else print("Same rows and same columns: **** PASSED ****")
 }
 
 same_cols <- function(df){
@@ -41,7 +40,7 @@ same_cols <- function(df){
   if ((max(cols_length) == min(cols_length)) && (any(cols_length == 0) == FALSE)){
     if (length(Reduce(intersect, cols)) != max(cols_length)) stop("Column names aren't the same across files")
   }
-  TRUE
+  print("Same column names in the same order: **** PASSED ****")
 }
 
 csv_to_df_list <- function(file_pattern, path=".", sep=",", header=TRUE, full.names=TRUE, ...){
@@ -87,6 +86,36 @@ csv_to_df <- function(file_pattern, ...){
   
   list_of_dfs <- csv_to_df_list(file_pattern, sep = "\t", ...)
   df <- list_to_df(list_of_dfs)
+  df
+}
+
+load_xlsx <- function(file_pattern, path = ".", sheetIndex = 1, full.names = TRUE, rowIndex, colIndex, ...){
+  # Get a list of all files ending in a particular extension,
+  # read them all into a list of data frames. Then check that they have the same number
+  # of rows and columns and have the same column names.
+  #
+  # Arguments:
+  # file_pattern: regular expression used to match file names
+  # path: path to search for matching files. Default is current working directory.
+  # sheetIndex: Numeric worksheet index; 1 would be the first worksheet in a workbook.
+  # full.names: generate full path + filename for list.files.
+  # rowIndex: which rows to include from each worksheet
+  # colIndex: which columns to include from each worksheet
+  
+  require(xlsx)
+  require(plyr)
+  listfiles <- list.files(pattern = file_pattern, full.names = full.names, path = path)
+  print(paste("Found", length(listfiles), "to import."))
+  print(listfiles) # What files are we about to read in?
+  reader <- function(file) read.xlsx(file, 
+                                     sheetIndex = sheetIndex, 
+                                     ...)[rowIndex, colIndex]
+  df_list <- lapply(listfiles, reader) # Read each worksheet into a list of data frames
+  if (length(df_list) == 0) stop("No files to import. Are there files you expected to load? Are they named properly?")
+  print(paste(length(df_list), "files successfully imported."))
+  same_dims(df_list) # Check that each data frame has the same number of rows and columns
+  same_cols(df_list) # Check that each data frame has the same column names
+  df <- do.call(rbind, df_list) # concatenate files into one large data frame
   df
 }
 
