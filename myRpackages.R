@@ -23,7 +23,8 @@ install.packages(c("Amelia",
                    "ltm",
                    "lordif",
                    "rgm",
-                   "devtools"
+                   "devtools",
+                   "xlsx"
                    )
                )
 
