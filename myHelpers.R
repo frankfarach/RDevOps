@@ -5,6 +5,18 @@ helper.function <- function()
    return(1)
 }
 
+globalPath <- function(macPath, pcPath) {
+  # Set data path based on the type of operating system
+  # we're on.
+  
+  if (.Platform$OS == "unix") {
+    outPath <- macDataPath
+  } else if (.Platform$OS == "windows") {
+    outPath <- pcDataPath
+  }
+  outPath
+}
+
 first_line <- function(df, split_by){
   # Given a data frame and a single factor on which to split it
   # return the first line.
